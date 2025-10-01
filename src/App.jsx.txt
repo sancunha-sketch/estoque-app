@@ -1,0 +1,390 @@
+import React, { useState } from 'react';
+import { Package, ShoppingCart, History, Plus, Minus, AlertTriangle, Edit2, Check, X } from 'lucide-react';
+
+export default function SimuladorEstoque() {
+  const estoqueInicial = [
+    { id: 1, nome: 'Água Sanitária', categoria: 'Limpeza', quantidade: 0, pontoCompra: 5, unidade: 'L' },
+    { id: 2, nome: 'Detergente', categoria: 'Limpeza', quantidade: 5, pontoCompra: 3, unidade: 'L' },
+    { id: 3, nome: 'Desinfetante', categoria: 'Limpeza', quantidade: 10, pontoCompra: 5, unidade: 'L' },
+    { id: 4, nome: 'Álcool Líquido', categoria: 'Limpeza', quantidade: 14, pontoCompra: 10, unidade: 'L' },
+    { id: 5, nome: 'Esponja Dupla Face', categoria: 'Limpeza', quantidade: 28, pontoCompra: 20, unidade: 'UN' },
+    { id: 6, nome: 'Papel Toalha Interfolhado', categoria: 'Papéis', quantidade: 12, pontoCompra: 10, unidade: 'UN' },
+    { id: 7, nome: 'Papel Higiênico Interfolhado', categoria: 'Papéis', quantidade: 12, pontoCompra: 10, unidade: 'UN' },
+    { id: 8, nome: 'Caixa Pizza Broto', categoria: 'Embalagens', quantidade: 100, pontoCompra: 50, unidade: 'UN' },
+    { id: 9, nome: 'Caixa Pizza Média', categoria: 'Embalagens', quantidade: 120, pontoCompra: 50, unidade: 'UN' },
+    { id: 10, nome: 'Caixa Pizza Grande', categoria: 'Embalagens', quantidade: 150, pontoCompra: 50, unidade: 'UN' },
+    { id: 11, nome: 'Bobina 5kg', categoria: 'Embalagens', quantidade: 4, pontoCompra: 3, unidade: 'UN' },
+    { id: 12, nome: 'Guardanapos', categoria: 'Embalagens', quantidade: 1, pontoCompra: 2, unidade: 'CX' },
+    { id: 13, nome: 'Milho', categoria: 'Enlatados', quantidade: 10, pontoCompra: 5, unidade: 'UN' },
+    { id: 14, nome: 'Tomate Pelado', categoria: 'Enlatados', quantidade: 5, pontoCompra: 5, unidade: 'UN' },
+    { id: 15, nome: 'Chocolate Meio Amargo', categoria: 'Chocolates', quantidade: 2, pontoCompra: 3, unidade: 'UN' },
+    { id: 16, nome: 'Chocolate Branco', categoria: 'Chocolates', quantidade: 6, pontoCompra: 5, unidade: 'UN' },
+    { id: 17, nome: 'Açúcar', categoria: 'Alimentícios', quantidade: 3, pontoCompra: 5, unidade: 'UN' },
+    { id: 18, nome: 'Sal Fino', categoria: 'Alimentícios', quantidade: 7, pontoCompra: 5, unidade: 'UN' },
+    { id: 19, nome: 'Farinha Trigo', categoria: 'Alimentícios', quantidade: 50, pontoCompra: 30, unidade: 'UN' },
+    { id: 20, nome: 'Arroz Branco', categoria: 'Alimentícios', quantidade: 27, pontoCompra: 20, unidade: 'UN' },
+    { id: 21, nome: 'Feijão Preto', categoria: 'Alimentícios', quantidade: 32, pontoCompra: 20, unidade: 'UN' },
+    { id: 22, nome: 'Tabasco Verde', categoria: 'Pimentas', quantidade: 4, pontoCompra: 3, unidade: 'UN' },
+    { id: 23, nome: 'Tabasco Vermelho', categoria: 'Pimentas', quantidade: 8, pontoCompra: 5, unidade: 'UN' },
+    { id: 24, nome: 'Requeijão Catupiry', categoria: 'Laticínios', quantidade: 9, pontoCompra: 10, unidade: 'UN' },
+    { id: 25, nome: 'Queijo Muçarela', categoria: 'Laticínios', quantidade: 21, pontoCompra: 15, unidade: 'UN' },
+    { id: 26, nome: 'Parmesão', categoria: 'Laticínios', quantidade: 2, pontoCompra: 3, unidade: 'UN' },
+    { id: 27, nome: 'Burrata', categoria: 'Laticínios', quantidade: 12, pontoCompra: 10, unidade: 'UN' },
+    { id: 28, nome: 'Creme de Leite', categoria: 'Laticínios', quantidade: 20, pontoCompra: 15, unidade: 'UN' },
+    { id: 29, nome: 'Leite Integral', categoria: 'Laticínios', quantidade: 55, pontoCompra: 40, unidade: 'L' },
+    { id: 30, nome: 'Espaguete', categoria: 'Massas', quantidade: 52, pontoCompra: 30, unidade: 'UN' },
+    { id: 31, nome: 'Penne', categoria: 'Massas', quantidade: 18, pontoCompra: 15, unidade: 'UN' },
+    { id: 32, nome: 'Óleo de Soja', categoria: 'Óleos', quantidade: 11, pontoCompra: 10, unidade: 'UN' },
+    { id: 33, nome: 'Brownie', categoria: 'Congelados', quantidade: 27, pontoCompra: 20, unidade: 'UN' },
+    { id: 34, nome: 'Bacon Fatiado', categoria: 'Embutidos', quantidade: 11, pontoCompra: 8, unidade: 'Kg' },
+    { id: 35, nome: 'Pepperoni', categoria: 'Embutidos', quantidade: 2, pontoCompra: 3, unidade: 'UN' },
+    { id: 36, nome: 'File Frango', categoria: 'Carnes', quantidade: 10, pontoCompra: 8, unidade: 'Kg' },
+    { id: 37, nome: 'File Mignon', categoria: 'Carnes', quantidade: 10, pontoCompra: 8, unidade: 'PÇ' },
+    { id: 38, nome: 'Camarão', categoria: 'Carnes', quantidade: 4, pontoCompra: 5, unidade: 'PCT' }
+  ];
+
+  const [produtos, setProdutos] = useState(estoqueInicial);
+  const [historico, setHistorico] = useState([]);
+  const [novoProduto, setNovoProduto] = useState({ nome: '', categoria: '', quantidade: '', pontoCompra: '', unidade: 'UN' });
+  const [abaSelecionada, setAbaSelecionada] = useState('estoque');
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState('Todas');
+  const [editandoId, setEditandoId] = useState(null);
+  const [editandoPontoId, setEditandoPontoId] = useState(null);
+  const [valorTemp, setValorTemp] = useState('');
+
+  const categorias = ['Todas', ...new Set(produtos.map(p => p.categoria))].sort();
+
+  const produtosAbaixoPonto = produtos.filter(p => p.quantidade <= p.pontoCompra);
+  const sugestoesCompra = produtosAbaixoPonto.map(p => ({
+    ...p,
+    sugestao: Math.max(Math.ceil(p.pontoCompra * 1.5) - p.quantidade, 1)
+  }));
+
+  const produtosFiltrados = produtos.filter(p => {
+    const matchCategoria = categoriaSelecionada === 'Todas' || p.categoria === categoriaSelecionada;
+    return matchCategoria;
+  });
+
+  const adicionarProduto = () => {
+    if (novoProduto.nome && novoProduto.quantidade && novoProduto.pontoCompra && novoProduto.categoria) {
+      const produto = {
+        id: Date.now(),
+        nome: novoProduto.nome,
+        categoria: novoProduto.categoria,
+        quantidade: parseFloat(novoProduto.quantidade),
+        pontoCompra: parseFloat(novoProduto.pontoCompra),
+        unidade: novoProduto.unidade
+      };
+      setProdutos([...produtos, produto]);
+      setNovoProduto({ nome: '', categoria: '', quantidade: '', pontoCompra: '', unidade: 'UN' });
+    }
+  };
+
+  const iniciarEdicao = (id, valor) => {
+    setEditandoId(id);
+    setValorTemp(valor.toString());
+  };
+
+  const iniciarEdicaoPonto = (id, valor) => {
+    setEditandoPontoId(id);
+    setValorTemp(valor.toString());
+  };
+
+  const salvarEdicao = (id) => {
+    setProdutos(produtos.map(p => 
+      p.id === id ? { ...p, quantidade: parseFloat(valorTemp) || 0 } : p
+    ));
+    setEditandoId(null);
+    setValorTemp('');
+  };
+
+  const salvarEdicaoPonto = (id) => {
+    setProdutos(produtos.map(p => 
+      p.id === id ? { ...p, pontoCompra: parseFloat(valorTemp) || 0 } : p
+    ));
+    setEditandoPontoId(null);
+    setValorTemp('');
+  };
+
+  const cancelarEdicao = () => {
+    setEditandoId(null);
+    setEditandoPontoId(null);
+    setValorTemp('');
+  };
+
+  const registrarContagem = () => {
+    const compra = {
+      id: Date.now(),
+      data: new Date().toLocaleString('pt-BR'),
+      tipo: 'Contagem de Estoque',
+      produtos: produtos.map(p => ({ nome: p.nome, quantidade: p.quantidade, unidade: p.unidade }))
+    };
+    setHistorico([compra, ...historico]);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
+            <h1 className="text-3xl font-bold flex items-center gap-3">
+              <Package size={36} />
+              Controle de Estoque - Sandro
+            </h1>
+            <p className="mt-2 opacity-90">Sistema de gestão com alertas de reposição</p>
+          </div>
+
+          <div className="flex border-b overflow-x-auto">
+            <button onClick={() => setAbaSelecionada('estoque')} className={`flex-1 py-4 px-6 font-semibold transition-colors flex items-center justify-center gap-2 ${abaSelecionada === 'estoque' ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}>
+              <Package size={20} />Estoque
+            </button>
+            <button onClick={() => setAbaSelecionada('comprar')} className={`flex-1 py-4 px-6 font-semibold transition-colors flex items-center justify-center gap-2 relative ${abaSelecionada === 'comprar' ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}>
+              <ShoppingCart size={20} />
+              Comprar
+              {produtosAbaixoPonto.length > 0 && (
+                <span className="absolute top-2 right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold">
+                  {produtosAbaixoPonto.length}
+                </span>
+              )}
+            </button>
+            <button onClick={() => setAbaSelecionada('historico')} className={`flex-1 py-4 px-6 font-semibold transition-colors flex items-center justify-center gap-2 ${abaSelecionada === 'historico' ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}>
+              <History size={20} />Histórico
+            </button>
+          </div>
+
+          <div className="p-6">
+            {abaSelecionada === 'estoque' && (
+              <div>
+                <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
+                    <div className="flex items-center gap-2 text-blue-700 font-semibold text-lg">
+                      <Package size={24} />
+                      Total de Produtos: {produtos.length}
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-r from-red-50 to-orange-100 p-4 rounded-lg border border-red-200">
+                    <div className="flex items-center gap-2 text-red-700 font-semibold text-lg">
+                      <AlertTriangle size={24} />
+                      Alertas de Compra: {produtosAbaixoPonto.length}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                  <h3 className="font-semibold text-lg mb-3">Adicionar Novo Produto</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
+                    <input type="text" placeholder="Nome" value={novoProduto.nome} onChange={(e) => setNovoProduto({ ...novoProduto, nome: e.target.value })} className="border rounded-lg px-4 py-2" />
+                    <select value={novoProduto.categoria} onChange={(e) => setNovoProduto({ ...novoProduto, categoria: e.target.value })} className="border rounded-lg px-4 py-2">
+                      <option value="">Categoria</option>
+                      {categorias.filter(c => c !== 'Todas').map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                    </select>
+                    <input type="number" placeholder="Qtd Atual" value={novoProduto.quantidade} onChange={(e) => setNovoProduto({ ...novoProduto, quantidade: e.target.value })} className="border rounded-lg px-4 py-2" />
+                    <input type="number" placeholder="Ponto Compra" value={novoProduto.pontoCompra} onChange={(e) => setNovoProduto({ ...novoProduto, pontoCompra: e.target.value })} className="border rounded-lg px-4 py-2" />
+                    <select value={novoProduto.unidade} onChange={(e) => setNovoProduto({ ...novoProduto, unidade: e.target.value })} className="border rounded-lg px-4 py-2">
+                      <option value="UN">UN</option><option value="Kg">Kg</option><option value="L">L</option><option value="PCT">PCT</option><option value="CX">CX</option><option value="PÇ">PÇ</option>
+                    </select>
+                    <button onClick={adicionarProduto} className="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 font-semibold flex items-center justify-center gap-2">
+                      <Plus size={20} />Add
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mb-4 flex justify-between items-center">
+                  <select value={categoriaSelecionada} onChange={(e) => setCategoriaSelecionada(e.target.value)} className="border rounded-lg px-4 py-2">
+                    {categorias.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                  </select>
+                  <button onClick={registrarContagem} className="bg-green-600 text-white rounded-lg px-6 py-2 hover:bg-green-700 font-semibold">
+                    Registrar Contagem
+                  </button>
+                </div>
+
+                <div className="grid gap-3">
+                  {produtosFiltrados.map(p => (
+                    <div key={p.id} className={`bg-white border-2 rounded-lg p-4 transition ${p.quantidade <= p.pontoCompra ? 'border-red-300 bg-red-50' : 'border-gray-200'}`}>
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-lg">{p.nome}</h3>
+                            {p.quantidade <= p.pontoCompra && (
+                              <AlertTriangle size={20} className="text-red-500" />
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-500">{p.categoria}</p>
+                        </div>
+                        <div className="flex gap-4">
+                          <div className="text-center">
+                            <p className="text-xs text-gray-500 mb-1">Quantidade</p>
+                            {editandoId === p.id ? (
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="number"
+                                  value={valorTemp}
+                                  onChange={(e) => setValorTemp(e.target.value)}
+                                  className="w-20 border rounded px-2 py-1 text-center"
+                                  autoFocus
+                                />
+                                <button onClick={() => salvarEdicao(p.id)} className="bg-green-500 text-white rounded p-1 hover:bg-green-600">
+                                  <Check size={16} />
+                                </button>
+                                <button onClick={cancelarEdicao} className="bg-red-500 text-white rounded p-1 hover:bg-red-600">
+                                  <X size={16} />
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <span className="text-xl font-bold">{p.quantidade} {p.unidade}</span>
+                                <button onClick={() => iniciarEdicao(p.id, p.quantidade)} className="text-blue-600 hover:text-blue-800">
+                                  <Edit2 size={16} />
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          <div className="text-center border-l pl-4">
+                            <p className="text-xs text-gray-500 mb-1">Ponto de Compra</p>
+                            {editandoPontoId === p.id ? (
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="number"
+                                  value={valorTemp}
+                                  onChange={(e) => setValorTemp(e.target.value)}
+                                  className="w-20 border rounded px-2 py-1 text-center"
+                                  autoFocus
+                                />
+                                <button onClick={() => salvarEdicaoPonto(p.id)} className="bg-green-500 text-white rounded p-1 hover:bg-green-600">
+                                  <Check size={16} />
+                                </button>
+                                <button onClick={cancelarEdicao} className="bg-red-500 text-white rounded p-1 hover:bg-red-600">
+                                  <X size={16} />
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <span className="text-lg font-semibold text-orange-600">{p.pontoCompra} {p.unidade}</span>
+                                <button onClick={() => iniciarEdicaoPonto(p.id, p.pontoCompra)} className="text-blue-600 hover:text-blue-800">
+                                  <Edit2 size={16} />
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {abaSelecionada === 'comprar' && (
+              <div>
+                <h2 className="text-2xl font-bold mb-4 text-gray-800">Sugestões de Compra</h2>
+                
+                {sugestoesCompra.length > 0 ? (
+                  <div>
+                    <div className="bg-orange-50 border-l-4 border-orange-500 p-4 mb-6 rounded">
+                      <div className="flex items-start gap-3">
+                        <AlertTriangle className="text-orange-500 mt-1" size={24} />
+                        <div>
+                          <h3 className="font-semibold text-orange-800 text-lg">
+                            {sugestoesCompra.length} produto(s) abaixo do ponto de compra
+                          </h3>
+                          <p className="text-orange-700 mt-1">
+                            Recomendamos realizar a reposição dos itens listados abaixo
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid gap-4">
+                      {sugestoesCompra.map(p => (
+                        <div key={p.id} className="bg-white border-2 border-orange-300 rounded-lg p-4">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <h3 className="font-semibold text-lg">{p.nome}</h3>
+                              <p className="text-sm text-gray-500">{p.categoria}</p>
+                              <div className="mt-2 space-y-1">
+                                <p className="text-sm">
+                                  <span className="text-red-600 font-semibold">Estoque atual: {p.quantidade} {p.unidade}</span>
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  Ponto de compra: {p.pontoCompra} {p.unidade}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm text-gray-600 mb-2">Sugestão de compra:</p>
+                              <div className="bg-green-100 border-2 border-green-500 rounded-lg px-6 py-3">
+                                <span className="text-3xl font-bold text-green-700">
+                                  {p.sugestao}
+                                </span>
+                                <span className="text-lg text-green-600 ml-2">{p.unidade}</span>
+                              </div>
+                              <p className="text-xs text-gray-500 mt-2">
+                                Total após compra: {p.quantidade + p.sugestao} {p.unidade}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-6 bg-blue-50 p-6 rounded-lg border border-blue-200">
+                      <h3 className="font-semibold text-lg mb-3 text-blue-900">Resumo da Compra Sugerida</h3>
+                      <div className="space-y-2">
+                        {sugestoesCompra.map(p => (
+                          <div key={p.id} className="flex justify-between text-sm">
+                            <span>{p.nome}</span>
+                            <span className="font-semibold">{p.sugestao} {p.unidade}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="bg-green-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-4">
+                      <Check size={48} className="text-green-600" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                      Estoque em ordem!
+                    </h3>
+                    <p className="text-gray-600">
+                      Todos os produtos estão acima do ponto de compra
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {abaSelecionada === 'historico' && (
+              <div>
+                <h2 className="text-2xl font-bold mb-4 text-gray-800">Histórico de Contagens</h2>
+                {historico.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    <History size={64} className="mx-auto mb-4 opacity-30" />
+                    <p className="text-lg">Nenhuma contagem registrada</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {historico.map(h => (
+                      <div key={h.id} className="bg-white border rounded-lg p-4">
+                        <div className="flex justify-between mb-3">
+                          <div>
+                            <p className="font-semibold">{h.tipo}</p>
+                            <p className="text-sm text-gray-500">{h.data}</p>
+                          </div>
+                          <span className="text-sm font-semibold text-blue-600">
+                            {h.produtos.length} produtos
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
